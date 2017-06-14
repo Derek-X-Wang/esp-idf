@@ -541,10 +541,10 @@ ip_napt_recv(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp)
     struct tcp_hdr *tcphdr = (struct tcp_hdr *)((u8_t *)p->payload + IPH_HL(iphdr) * 4);
 
     // LWIP_DEBUGF(NAPT_DEBUG, ("ip_napt_recv\n"));
-    ip4_addr_t ip4_src = {iphdr->src.addr};
-    char* str_src = ip4addr_ntoa(&ip4_src);
-    ip4_addr_t ip4_dest = {iphdr->dest.addr};
-    char* str_dest = ip4addr_ntoa(&ip4_dest);
+    // ip4_addr_t ip4_src = {iphdr->src.addr};
+    // char* str_src = ip4addr_ntoa(&ip4_src);
+    // ip4_addr_t ip4_dest = {iphdr->dest.addr};
+    // char* str_dest = ip4addr_ntoa(&ip4_dest);
     // ESP_LOGI("ip_napt_recv TCP", "src: %s, dest: %s, ", str_src, str_dest);
     //
     //   LWIP_DEBUGF(NAPT_DEBUG, ("sport %u, dport: %u\n",
@@ -588,10 +588,10 @@ ip_napt_recv(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp)
     struct udp_hdr *udphdr = (struct udp_hdr *)((u8_t *)p->payload + IPH_HL(iphdr) * 4);
     m = ip_portmap_find(IP_PROTO_UDP, udphdr->dest);
     // ESP_LOGI("ip_napt_recv UDP", "enter.....");
-    ip4_addr_t ip4_src = {iphdr->src.addr};
-    char* str_src = ip4addr_ntoa(&ip4_src);
-    ip4_addr_t ip4_dest = {iphdr->dest.addr};
-    char* str_dest = ip4addr_ntoa(&ip4_dest);
+    // ip4_addr_t ip4_src = {iphdr->src.addr};
+    // char* str_src = ip4addr_ntoa(&ip4_src);
+    // ip4_addr_t ip4_dest = {iphdr->dest.addr};
+    // char* str_dest = ip4addr_ntoa(&ip4_dest);
     // ESP_LOGI("ip_napt_recv UDP", "src: %s, dest: %s, ", str_src, str_dest);
     if (m) {
       // ESP_LOGI("ip_napt_recv UDP", "port map find");
@@ -650,10 +650,10 @@ ip_napt_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp, struct 
   if (IPH_PROTO(iphdr) == IP_PROTO_TCP) {
     struct tcp_hdr *tcphdr = (struct tcp_hdr *)((u8_t *)p->payload + IPH_HL(iphdr) * 4);
     u16_t mport;
-    ip4_addr_t ip4_src = {iphdr->src.addr};
-    char* str_src = ip4addr_ntoa(&ip4_src);
-    ip4_addr_t ip4_dest = {iphdr->dest.addr};
-    char* str_dest = ip4addr_ntoa(&ip4_dest);
+    // ip4_addr_t ip4_src = {iphdr->src.addr};
+    // char* str_src = ip4addr_ntoa(&ip4_src);
+    // ip4_addr_t ip4_dest = {iphdr->dest.addr};
+    // char* str_dest = ip4addr_ntoa(&ip4_dest);
     // ESP_LOGI("ip_napt_forward TCP", "src: %s, dest: %s, ", str_src, str_dest);
 
     struct portmap_table *m = ip_portmap_find_dest(IP_PROTO_TCP, tcphdr->src, iphdr->src.addr);
@@ -702,10 +702,10 @@ ip_napt_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp, struct 
   if (IPH_PROTO(iphdr) == IP_PROTO_UDP) {
     struct udp_hdr *udphdr = (struct udp_hdr *)((u8_t *)p->payload + IPH_HL(iphdr) * 4);
     u16_t mport;
-    ip4_addr_t ip4_src = {iphdr->src.addr};
-    char* str_src = ip4addr_ntoa(&ip4_src);
-    ip4_addr_t ip4_dest = {iphdr->dest.addr};
-    char* str_dest = ip4addr_ntoa(&ip4_dest);
+    // ip4_addr_t ip4_src = {iphdr->src.addr};
+    // char* str_src = ip4addr_ntoa(&ip4_src);
+    // ip4_addr_t ip4_dest = {iphdr->dest.addr};
+    // char* str_dest = ip4addr_ntoa(&ip4_dest);
     // ESP_LOGI("ip_napt_forward UDP", "src: %s, dest: %s, ", str_src, str_dest);
 
     struct portmap_table *m = ip_portmap_find_dest(IP_PROTO_UDP, udphdr->src, iphdr->src.addr);
@@ -1165,10 +1165,10 @@ ip4_input(struct pbuf *p, struct netif *inp)
   }
 #endif
 
-ip4_addr_t ip4_src = {iphdr->src.addr};
-char* str_src = ip4addr_ntoa(&ip4_src);
-ip4_addr_t ip4_dest = {iphdr->dest.addr};
-char* str_dest = ip4addr_ntoa(&ip4_dest);
+// ip4_addr_t ip4_src = {iphdr->src.addr};
+// char* str_src = ip4addr_ntoa(&ip4_src);
+// ip4_addr_t ip4_dest = {iphdr->dest.addr};
+// char* str_dest = ip4addr_ntoa(&ip4_dest);
 // ESP_LOGI(".................", "src: %s, dest: %s, ", str_src, str_dest);
 
 #if IP_NAPT

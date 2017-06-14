@@ -284,10 +284,10 @@ static u8_t *add_offer_options(u8_t *optptr)
 #ifdef USE_DNS
     *optptr++ = DHCP_OPTION_DNS_SERVER;
     *optptr++ = 4;
-    *optptr++ = ip4_addr1(&ipadd);
-    *optptr++ = ip4_addr2(&ipadd);
-    *optptr++ = ip4_addr3(&ipadd);
-    *optptr++ = ip4_addr4(&ipadd);
+    *optptr++ = ip4_addr1(&dns_address);
+    *optptr++ = ip4_addr2(&dns_address);
+    *optptr++ = ip4_addr3(&dns_address);
+    *optptr++ = ip4_addr4(&dns_address);
 #endif
 
 #ifdef CLASS_B_NET
