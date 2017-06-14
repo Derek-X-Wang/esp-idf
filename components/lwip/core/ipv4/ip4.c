@@ -341,10 +341,10 @@ ip_napt_find(u8_t proto, u32_t addr, u16_t port, u16_t mport, u8_t dest)
 static u16_t
 ip_napt_add(u8_t proto, u32_t src, u16_t sport, u32_t dest, u16_t dport)
 {
-  ESP_LOGI("start", "ip_napt_add");
+  // ESP_LOGI("start", "ip_napt_add");
   struct napt_table *t = ip_napt_find(proto, src, sport, 0, 0);
   if (t) {
-    ESP_LOGI("ip_napt_add", "update");
+    // ESP_LOGI("ip_napt_add", "update");
     t->last = sys_now();
     t->dest = dest;
     t->dport = dport;
@@ -359,7 +359,7 @@ ip_napt_add(u8_t proto, u32_t src, u16_t sport, u32_t dest, u16_t dport)
   }
   t = NT(napt_free);
   if (t) {
-    ESP_LOGI("ip_napt_add", "create");
+    // ESP_LOGI("ip_napt_add", "create");
     u16_t mport = sport;
 #if LWIP_TCP
     if (proto == IP_PROTO_TCP)
@@ -545,7 +545,7 @@ ip_napt_recv(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp)
     char* str_src = ip4addr_ntoa(&ip4_src);
     ip4_addr_t ip4_dest = {iphdr->dest.addr};
     char* str_dest = ip4addr_ntoa(&ip4_dest);
-    ESP_LOGI("ip_napt_recv TCP", "src: %s, dest: %s, ", str_src, str_dest);
+    // ESP_LOGI("ip_napt_recv TCP", "src: %s, dest: %s, ", str_src, str_dest);
     //
     //   LWIP_DEBUGF(NAPT_DEBUG, ("sport %u, dport: %u\n",
     //                     PP_HTONS(tcphdr->src),
@@ -553,7 +553,7 @@ ip_napt_recv(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp)
 
     m = ip_portmap_find(IP_PROTO_TCP, tcphdr->dest);
     if (m) {
-      ESP_LOGI("ip_napt_recv TCP", "port map find");
+      // ESP_LOGI("ip_napt_recv TCP", "port map find");
       /* packet to mapped port: rewrite destination */
       if (m->dport != tcphdr->dest)
         ip_napt_modify_port_tcp(tcphdr, 1, m->dport);
@@ -562,10 +562,10 @@ ip_napt_recv(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp)
       return;
     }
     t = ip_napt_find(IP_PROTO_TCP, iphdr->src.addr, tcphdr->src, tcphdr->dest, 1);
-    ESP_LOGI("ip_napt_recv TCP", "before napt find");
+    // ESP_LOGI("ip_napt_recv TCP", "before napt find");
     if (!t)
       return; /* Unknown TCP session; do nothing */
-    ESP_LOGI("ip_napt_recv TCP", "napt find");
+    // ESP_LOGI("ip_napt_recv TCP", "napt find");
     if (t->sport != tcphdr->dest)
       ip_napt_modify_port_tcp(tcphdr, 1, t->sport);
     ip_napt_modify_addr_tcp(tcphdr, &iphdr->dest, t->src);
@@ -587,14 +587,14 @@ ip_napt_recv(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp)
   if (IPH_PROTO(iphdr) == IP_PROTO_UDP) {
     struct udp_hdr *udphdr = (struct udp_hdr *)((u8_t *)p->payload + IPH_HL(iphdr) * 4);
     m = ip_portmap_find(IP_PROTO_UDP, udphdr->dest);
-    //ESP_LOGI("ip_napt_recv UDP", "enter.....");
+    // ESP_LOGI("ip_napt_recv UDP", "enter.....");
     ip4_addr_t ip4_src = {iphdr->src.addr};
     char* str_src = ip4addr_ntoa(&ip4_src);
     ip4_addr_t ip4_dest = {iphdr->dest.addr};
     char* str_dest = ip4addr_ntoa(&ip4_dest);
-    ESP_LOGI("ip_napt_recv UDP", "src: %s, dest: %s, ", str_src, str_dest);
+    // ESP_LOGI("ip_napt_recv UDP", "src: %s, dest: %s, ", str_src, str_dest);
     if (m) {
-      ESP_LOGI("ip_napt_recv UDP", "port map find");
+      // ESP_LOGI("ip_napt_recv UDP", "port map find");
       /* packet to mapped port: rewrite destination */
       if (m->dport != udphdr->dest)
         ip_napt_modify_port_udp(udphdr, 1, m->dport);
@@ -603,10 +603,10 @@ ip_napt_recv(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp)
       return;
     }
     t = ip_napt_find(IP_PROTO_UDP, iphdr->src.addr, udphdr->src, udphdr->dest, 1);
-    ESP_LOGI("ip_napt_recv UDP", "before napt find");
+    // ESP_LOGI("ip_napt_recv UDP", "before napt find");
     if (!t)
       return; /* Unknown session; do nothing */
-    ESP_LOGI("ip_napt_recv UDP", "napt find");
+    // ESP_LOGI("ip_napt_recv UDP", "napt find");
     if (t->sport != udphdr->dest)
       ip_napt_modify_port_udp(udphdr, 1, t->sport);
     ip_napt_modify_addr_udp(udphdr, &iphdr->dest, t->src);
@@ -631,7 +631,7 @@ ip_napt_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp, struct 
 {
   if (!inp->napt)
     return ERR_OK;
-  ESP_LOGI("ip_napt_forward", "napt enabled");
+  // ESP_LOGI("ip_napt_forward", "napt enabled");
 #if LWIP_ICMP
   /* NAPT for ICMP Echo Request using identifier */
   if (IPH_PROTO(iphdr) == IP_PROTO_ICMP) {
@@ -654,11 +654,11 @@ ip_napt_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp, struct 
     char* str_src = ip4addr_ntoa(&ip4_src);
     ip4_addr_t ip4_dest = {iphdr->dest.addr};
     char* str_dest = ip4addr_ntoa(&ip4_dest);
-    ESP_LOGI("ip_napt_forward TCP", "src: %s, dest: %s, ", str_src, str_dest);
+    // ESP_LOGI("ip_napt_forward TCP", "src: %s, dest: %s, ", str_src, str_dest);
 
     struct portmap_table *m = ip_portmap_find_dest(IP_PROTO_TCP, tcphdr->src, iphdr->src.addr);
     if (m) {
-      ESP_LOGI("ip_napt_forward TCP", "port map find");
+      // ESP_LOGI("ip_napt_forward TCP", "port map find");
       /* packet from port-mapped dest addr/port: rewrite source to this node */
       if (m->mport != tcphdr->src)
         ip_napt_modify_port_tcp(tcphdr, 0, m->mport);
@@ -669,7 +669,7 @@ ip_napt_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp, struct 
     if ((TCPH_FLAGS(tcphdr) & (TCP_SYN|TCP_ACK)) == TCP_SYN &&
         PP_NTOHS(tcphdr->src) >= 1024) {
       /* Register new TCP session to NAPT */
-      ESP_LOGI("ip_napt_forward TCP", "Register new TCP session to NAPT");
+      // ESP_LOGI("ip_napt_forward TCP", "Register new TCP session to NAPT");
       mport = ip_napt_add(IP_PROTO_TCP, iphdr->src.addr, tcphdr->src,
                           iphdr->dest.addr, tcphdr->dest);
     } else {
@@ -681,7 +681,7 @@ ip_napt_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp, struct 
         return ERR_RTE; /* Drop unknown TCP session */
       }
       mport = t->mport;
-      ESP_LOGI("ip_napt_forward TCP", "napt find");
+      // ESP_LOGI("ip_napt_forward TCP", "napt find");
       if ((TCPH_FLAGS(tcphdr) & TCP_FIN))
         t->fin2 = 1;
       if (t->fin1 && (TCPH_FLAGS(tcphdr) & TCP_ACK))
@@ -706,11 +706,11 @@ ip_napt_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp, struct 
     char* str_src = ip4addr_ntoa(&ip4_src);
     ip4_addr_t ip4_dest = {iphdr->dest.addr};
     char* str_dest = ip4addr_ntoa(&ip4_dest);
-    ESP_LOGI("ip_napt_forward UDP", "src: %s, dest: %s, ", str_src, str_dest);
+    // ESP_LOGI("ip_napt_forward UDP", "src: %s, dest: %s, ", str_src, str_dest);
 
     struct portmap_table *m = ip_portmap_find_dest(IP_PROTO_UDP, udphdr->src, iphdr->src.addr);
     if (m) {
-      ESP_LOGI("ip_napt_forward UDP", "port map find");
+      // ESP_LOGI("ip_napt_forward UDP", "port map find");
       /* packet from port-mapped dest addr/port: rewrite source to this node */
       if (m->mport != udphdr->src)
         ip_napt_modify_port_udp(udphdr, 0, m->mport);
@@ -720,11 +720,11 @@ ip_napt_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp, struct 
     }
     if (PP_NTOHS(udphdr->src) >= 1024) {
       /* Register new UDP session */
-      ESP_LOGI("ip_napt_forward UDP", "Register new UDP session");
+      // ESP_LOGI("ip_napt_forward UDP", "Register new UDP session");
       mport = ip_napt_add(IP_PROTO_UDP, iphdr->src.addr, udphdr->src,
                           iphdr->dest.addr, udphdr->dest);
     } else {
-      ESP_LOGI("ip_napt_forward UDP", "before napt find");
+      // ESP_LOGI("ip_napt_forward UDP", "before napt find");
       struct napt_table *t = ip_napt_find(IP_PROTO_UDP, iphdr->src.addr, udphdr->src, 0, 0);
       if (!t || t->dest != iphdr->dest.addr || t->dport != udphdr->dest) {
 #if LWIP_ICMP
@@ -732,7 +732,7 @@ ip_napt_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp, struct 
 #endif
         return ERR_RTE; /* Drop unknown UDP session */
       }
-      ESP_LOGI("ip_napt_forward UDP", "napt find");
+      // ESP_LOGI("ip_napt_forward UDP", "napt find");
       mport = t->mport;
     }
 
@@ -975,11 +975,11 @@ ip4_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp)
   struct netif *netif;
 
   PERF_START;
-  ESP_LOGI("ip_napt_forward", "1");
+  // ESP_LOGI("ip_napt_forward", "1");
   if (!ip4_canforward(p)) {
     goto return_noroute;
   }
-  ESP_LOGI("ip_napt_forward", "2");
+  // ESP_LOGI("ip_napt_forward", "2");
   /* RFC3927 2.7: do not forward link-local addresses */
   if (ip4_addr_islinklocal(ip4_current_dest_addr())) {
     // LWIP_DEBUGF(IP_DEBUG, ("ip4_forward: not forwarding LLA %"U16_F".%"U16_F".%"U16_F".%"U16_F"\n",
@@ -987,7 +987,7 @@ ip4_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp)
     //   ip4_addr3_16_v1(ip4_current_dest_addr()), ip4_addr4_16_v1(ip4_current_dest_addr())));
     goto return_noroute;
   }
-  ESP_LOGI("ip_napt_forward", "3");
+  // ESP_LOGI("ip_napt_forward", "3");
   /* Find network interface where to forward this IP packet to. */
   netif = ip4_route_src(ip4_current_dest_addr(), ip4_current_src_addr());
   if (netif == NULL) {
@@ -997,7 +997,7 @@ ip4_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp)
     /* @todo: send ICMP_DUR_NET? */
     goto return_noroute;
   }
-  ESP_LOGI("ip_napt_forward", "4");
+  // ESP_LOGI("ip_napt_forward", "4");
 #if !IP_FORWARD_ALLOW_TX_ON_RX_NETIF
   /* Do not forward packets onto the same network interface on which
    * they arrived. */
@@ -1007,7 +1007,7 @@ ip4_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp)
   }
 #endif /* IP_FORWARD_ALLOW_TX_ON_RX_NETIF */
 
-  ESP_LOGI("ip_napt_forward", "5");
+  // ESP_LOGI("ip_napt_forward", "5");
   /* decrement TTL */
   IPH_TTL_SET(iphdr, IPH_TTL(iphdr) - 1);
   /* send ICMP if TTL == 0 */
@@ -1023,10 +1023,10 @@ ip4_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp)
   }
 
 #if IP_NAPT
-  ESP_LOGI("ip_napt_forward", "before");
+  // ESP_LOGI("ip_napt_forward", "before");
   if (ip_napt_forward(p, iphdr, inp, netif) != ERR_OK)
     return;
-  ESP_LOGI("ip_napt_forward", "okay");
+  // ESP_LOGI("ip_napt_forward", "okay");
 #endif
 
   /* Incrementally update the IP checksum. */
@@ -1169,7 +1169,7 @@ ip4_addr_t ip4_src = {iphdr->src.addr};
 char* str_src = ip4addr_ntoa(&ip4_src);
 ip4_addr_t ip4_dest = {iphdr->dest.addr};
 char* str_dest = ip4addr_ntoa(&ip4_dest);
-ESP_LOGI(".................", "src: %s, dest: %s, ", str_src, str_dest);
+// ESP_LOGI(".................", "src: %s, dest: %s, ", str_src, str_dest);
 
 #if IP_NAPT
   /* for unicast packet, check NAPT table and modify dest if needed */
@@ -1182,7 +1182,7 @@ ESP_LOGI(".................", "src: %s, dest: %s, ", str_src, str_dest);
   // ESP_LOGI("recv", "inp dest.addr  %s\n", ip4addr_ntoa(&(inp->ip_addr.u_addr.ip4)));
   if (!inp->napt && (iphdr->dest.addr == inp->ip_addr.u_addr.ip4.addr)){
     //LWIP_DEBUGF(1, "ip_napt_recv before");
-    ESP_LOGI("recv", "dest is cur netif");
+    // ESP_LOGI("recv", "dest is cur netif");
     ip_napt_recv(p, iphdr, inp);
   }
 #endif
@@ -1324,7 +1324,7 @@ ESP_LOGI(".................", "src: %s, dest: %s, ", str_src, str_dest);
       // if (inp->napt) {
       //   ip_napt_recv(p, iphdr, netif);
       // } else {
-      ESP_LOGI("forward", "not for us");
+      // ESP_LOGI("forward", "not for us");
         ip4_forward(p, iphdr, inp);
       // }
     } else
