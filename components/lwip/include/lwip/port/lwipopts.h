@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2001-2003 Swedish Institute of Computer Science.
- * All rights reserved. 
- * 
- * Redistribution and use in source and binary forms, with or without modification, 
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
@@ -11,21 +11,21 @@
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission. 
+ *    derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED 
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT 
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT 
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  * OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
- * 
+ *
  * Author: Simon Goldschmidt
  *
  */
@@ -150,6 +150,31 @@
    --------------------------------
 */
 /**
+ * IP_FORWARD==1: Enables the ability to forward IP packets across network
+ * interfaces. If you are going to run lwIP on a device with only one network
+ * interface, define this to 0.
+ */
+#ifndef IP_FORWARD
+#define IP_FORWARD                      1
+#endif
+
+/**
+ * IP_NAPT==1: Enables the ability to do Network Address Port Translation (NAPT)
+ * on forwarded packets. This only makes sense with IP_FORWARD==1.
+ */
+#ifndef IP_NAPT
+#define IP_NAPT                         1
+#endif
+
+/**
+ * IP_NAPT_DYNAMIC==1: Saves the memory for the NAPT tables if not required.
+ * If NAPT is used, ip_napt_init() has to be called explicitly once.
+ */
+#ifndef IP_NAPT_DYNAMIC
+#define IP_NAPT_DYNAMIC                 0
+#endif
+
+/**
  * IP_REASSEMBLY==1: Reassemble incoming fragmented IP packets. Note that
  * this option does not affect outgoing packet sizes, which can be controlled
  * via IP_FRAG.
@@ -220,13 +245,13 @@
  /**
   * LWIP_AUTOIP==1: Enable AUTOIP module.
   */
-#define LWIP_AUTOIP                     1
+#define LWIP_AUTOIP                     0
 
 /**
 * LWIP_DHCP_AUTOIP_COOP==1: Allow DHCP and AUTOIP to be both enabled on
 * the same interface at the same time.
 */
-#define LWIP_DHCP_AUTOIP_COOP           1
+#define LWIP_DHCP_AUTOIP_COOP           0
 
 /**
 * LWIP_DHCP_AUTOIP_COOP_TRIES: Set to the number of DHCP DISCOVER probes
@@ -235,7 +260,7 @@
 * be prepared to handle a changing IP address when DHCP overrides
 * AutoIP.
 */
-#define LWIP_DHCP_AUTOIP_COOP_TRIES     2
+#define LWIP_DHCP_AUTOIP_COOP_TRIES     9
 #endif
 
 /*
@@ -305,6 +330,11 @@
  */
 #define TCP_LISTEN_BACKLOG              1
 
+/**
+ * 2 * TCP_MSL defines duration of socket TIME-WAIT state in ms.
+ */
+#define TCP_MSL 2500UL
+
 /*
    ----------------------------------
    ---------- Pbuf options ----------
@@ -344,7 +374,7 @@
  * LWIP_NETIF_LOOPBACK==1: Support sending packets with a destination IP
  * address equal to the netif IP address, looping them back up the stack.
  */
-#define LWIP_NETIF_LOOPBACK             1
+#define LWIP_NETIF_LOOPBACK             0
 
 /**
  * LWIP_LOOPBACK_MAX_PBUFS: Maximum number of pbufs on queue for loopback
@@ -636,6 +666,20 @@
 #define TCPIP_DEBUG                     LWIP_DBG_OFF
 
 /**
+ * DNS_DEBUG: Enable debugging for DNS.
+ */
+#ifndef DNS_DEBUG
+#define DNS_DEBUG                       LWIP_DBG_OFF
+#endif
+
+/**
+ * NAPT_DEBUG: Enable debugging for NAPT.
+ */
+#ifndef NAPT_DEBUG
+#define NAPT_DEBUG                       LWIP_DBG_OFF
+#endif
+
+/**
  * ETHARP_TRUST_IP_MAC==1: Incoming IP packets cause the ARP table to be
  * updated with the source MAC and IP addresses supplied in the packet.
  * You may want to disable this if you do not trust LAN peers to have the
@@ -692,7 +736,7 @@ enum {
 };
 
 #else
-#define DBG_PERF_PATH_SET(dir, point)   
+#define DBG_PERF_PATH_SET(dir, point)
 #define DBG_PERF_FILTER_LEN             1000
 #endif
 
@@ -732,5 +776,12 @@ enum {
     } while (0);
 
 #define SOC_SEND_LOG //printf
+
+/**
+ * NAPT_DEBUG: Enable debugging for NAPT.
+ */
+#ifndef NAPT_DEBUG
+#define NAPT_DEBUG                       LWIP_DBG_OFF
+#endif
 
 #endif /* __LWIPOPTS_H__ */

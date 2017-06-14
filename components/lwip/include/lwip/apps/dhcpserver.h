@@ -197,5 +197,8 @@ void dhcps_stop(struct netif *netif);
 void *dhcps_option_info(u8_t op_id, u32_t opt_len);
 bool dhcp_search_ip_on_mac(u8_t *mac, ip4_addr_t *ip);
 
-#endif
+void dhcps_set_DNS(ip4_addr_t *dns_ip);
+struct dhcps_pool * dhcps_get_mapping(u16_t no);
+void dhcps_set_mapping(ip4_addr_t *addr, u8_t *mac, u32_t lease_time);
 
+#endif

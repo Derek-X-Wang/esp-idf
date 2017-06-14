@@ -9,7 +9,7 @@ COMPONENT_ADD_INCLUDEDIRS := \
 	apps/ping
 
 ifdef CONFIG_PPP_SUPPORT
-LWIP_PPP_DIRS := netif/ppp/polarssl netif/ppp 
+LWIP_PPP_DIRS := netif/ppp/polarssl netif/ppp
 endif
 
 COMPONENT_SRCDIRS := \
@@ -24,4 +24,3 @@ CFLAGS += -Wno-address  # lots of LWIP source files evaluate macros that check a
 api/tcpip.o apps/dhcpserver.o: CFLAGS += -Wno-unused-variable
 apps/dhcpserver.o core/pbuf.o core/tcp_in.o: CFLAGS += -Wno-unused-but-set-variable
 netif/ppp/pppos.o: CFLAGS += -Wno-type-limits
-

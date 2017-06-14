@@ -211,7 +211,7 @@ netif_add(struct netif *netif,
 
   NETIF_SET_CHECKSUM_CTRL(netif, NETIF_CHECKSUM_ENABLE_ALL);
   netif->flags = 0;
-  
+
 #if LWIP_DHCP
   /* netif not under DHCP control by default */
   netif->dhcp = NULL;
@@ -272,6 +272,10 @@ netif_add(struct netif *netif,
 #if ENABLE_LOOPBACK && LWIP_LOOPBACK_MAX_PBUFS
   netif->loop_cnt_current = 0;
 #endif /* ENABLE_LOOPBACK && LWIP_LOOPBACK_MAX_PBUFS */
+
+#if IP_NAPT
+  netif->napt = 0;
+#endif /* IP_NAPT */
 
 #if LWIP_IPV4
   netif_set_addr(netif, ipaddr, netmask, gw);
@@ -967,7 +971,7 @@ netif_create_ip6_linklocal_address(struct netif *netif, u8_t from_mac_48bit)
       ip_2_ip6(&netif->ip6_addr[0])->addr[addr_index] |= ((u32_t)(netif->hwaddr[netif->hwaddr_len - i - 1])) << (8 * (i & 0x03));
     }
   }
-  
+
 
   /* Set address state. */
 #if LWIP_IPV6_DUP_DETECT_ATTEMPTS

@@ -150,6 +150,13 @@ void ip4_debug_print(struct pbuf *p);
 #define ip4_debug_print(p)
 #endif /* IP_DEBUG */
 
+
+#if NAPT_DEBUG
+void napt_debug_print()ICACHE_FLASH_ATTR;
+#else
+#define napt_debug_print(p)
+#endif /* NAPT_DEBUG */
+
 #ifdef __cplusplus
 }
 #endif
@@ -157,5 +164,3 @@ void ip4_debug_print(struct pbuf *p);
 #endif /* LWIP_IPV4 */
 
 #endif /* LWIP_HDR_IP_H */
-
-

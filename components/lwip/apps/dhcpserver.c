@@ -21,6 +21,7 @@
 #include "lwip/mem.h"
 #include "lwip/ip_addr.h"
 #include "tcpip_adapter.h"
+#include "os.h"
 
 #include "apps/dhcpserver.h"
 
@@ -80,6 +81,8 @@ static ip4_addr_t  broadcast_dhcps;
 static ip4_addr_t server_address;
 static ip4_addr_t client_address;        //added
 static ip4_addr_t client_address_plus;
+
+static ip4_addr_t dns_address = {0};
 
 static list_node *plist = NULL;
 static bool renew = false;
@@ -734,7 +737,7 @@ static u8_t parse_options(u8_t *optptr, s16_t len)
 static s16_t parse_msg(struct dhcps_msg *m, u16_t len)
 {
     u32_t lease_timer = (dhcps_lease_time * 60)/DHCPS_COARSE_TIMER_SECS;
-    
+
     if (memcmp((char *)m->options, &magic_cookie, sizeof(magic_cookie)) == 0) {
 #if DHCPS_DEBUG
         DHCPS_LOG("dhcps: len = %d\n", len);
@@ -1064,6 +1067,9 @@ void dhcps_start(struct netif *netif, ip4_addr_t ip)
     IP4_ADDR(&broadcast_dhcps, 255, 255, 255, 255);
 
     server_address.addr = ip.addr;
+    if (dns_address.addr == 0) {
+  		dns_address = server_address;
+  	}
     dhcps_poll_set(server_address.addr);
 
     client_address_plus.addr = dhcps_poll.start_ip.addr;
@@ -1210,5 +1216,39 @@ bool dhcp_search_ip_on_mac(u8_t *mac, ip4_addr_t *ip)
 
     return ret;
 }
-#endif
 
+void
+dhcps_set_DNS(ip4_addr_t *dns_ip)
+{
+  dns_address = *dns_ip;
+}
+
+struct dhcps_pool *
+dhcps_get_mapping(u16_t no)
+{
+  list_node *pback_node = NULL;
+
+	for (pback_node = plist; pback_node != NULL;pback_node = pback_node->pnext, no--) {
+	  if (no == 0) return pback_node->pnode;
+	}
+	return NULL;
+}
+
+void
+dhcps_set_mapping(ip4_addr_t *addr, u8_t *mac, u32_t lease_time)
+{
+  list_node *pback_node = NULL;
+  list_node *pnode = NULL;
+  struct dhcps_pool *pdhcps_pool = NULL;
+
+	pdhcps_pool = (struct dhcps_pool *)os_zalloc(sizeof(struct dhcps_pool));
+	pdhcps_pool->ip.addr = addr->addr;
+	os_memcpy(pdhcps_pool->mac, mac, sizeof(pdhcps_pool->mac));
+	pdhcps_pool->lease_timer = lease_time;
+	pnode = (list_node *)os_zalloc(sizeof(list_node ));
+	pnode->pnode = pdhcps_pool;
+	pnode->pnext = NULL;
+	node_insert_to_list(&plist,pnode);
+}
+
+#endif

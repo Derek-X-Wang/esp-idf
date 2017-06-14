@@ -248,9 +248,9 @@ struct netif {
   struct dhcp *dhcp;
 
 #if ESP_LWIP
-  struct udp_pcb *dhcps_pcb;	
+  struct udp_pcb *dhcps_pcb;
   dhcp_event_fn dhcp_event;
-#endif  
+#endif
 
 #endif /* LWIP_DHCP */
 
@@ -295,7 +295,7 @@ struct netif {
   char name[2];
   /** number of this interface */
   u8_t num;
-  
+
 #if MIB2_STATS
   /** link type (from "snmp_ifType" enum from snmp_mib2.h) */
   u8_t link_type;
@@ -330,6 +330,10 @@ struct netif {
   u16_t loop_cnt_current;
 #endif /* LWIP_LOOPBACK_MAX_PBUFS */
 #endif /* ENABLE_LOOPBACK */
+
+#if IP_NAPT
+  u8_t napt;
+#endif
 
 #if ESP_LWIP
   void (*l2_buffer_free_notify)(void *user_buf); /* Allows LWIP to notify driver when a L2-supplied pbuf can be freed */

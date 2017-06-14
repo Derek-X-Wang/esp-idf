@@ -555,7 +555,11 @@
  * interface, define this to 0.
  */
 #ifndef IP_FORWARD
-#define IP_FORWARD                      0
+#define IP_FORWARD                      1
+#endif
+
+#ifndef IP_NAPT
+#define IP_NAPT                         1
 #endif
 
 /**
@@ -2986,6 +2990,13 @@
  */
 #ifndef DNS_DEBUG
 #define DNS_DEBUG                       LWIP_DBG_OFF
+#endif
+
+/**
+ * NAPT_DEBUG: Enable debugging for NAPT.
+ */
+#ifndef NAPT_DEBUG
+#define NAPT_DEBUG                       LWIP_DBG_OFF
 #endif
 
 /**

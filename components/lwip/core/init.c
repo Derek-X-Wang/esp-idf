@@ -61,6 +61,8 @@
 #include "lwip/api.h"
 #include "netif/ppp/ppp_impl.h"
 
+#include "lwip/ip4_napt.h"
+
 #if ! ESP_PERF
 /* Compile-time sanity checks for configuration errors.
  * These can be done independently of LWIP_DEBUG, without penalty.
@@ -373,4 +375,8 @@ lwip_init(void)
 #if LWIP_TIMERS
   sys_timeouts_init();
 #endif /* LWIP_TIMERS */
+
+#if IP_NAPT && !IP_NAPT_DYNAMIC
+  ip_napt_init(IP_NAPT_MAX, IP_PORTMAP_MAX);
+#endif /* IP_NAPT */
 }
